@@ -31,7 +31,7 @@ frame = 22
 [node name="smoke" type="Node2D" parent="sprite"]
 
 [node name="bullet_shoot" type="Position2D" parent="sprite"]
-position = Vector2( 30.659, 6.132 )
+position = Vector2( 30.659, 5 )
 
 [node name="anim" type="AnimationPlayer" parent="."]
 anims/crouch = ExtResource( 3 )

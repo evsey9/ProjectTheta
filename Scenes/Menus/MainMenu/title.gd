@@ -1,6 +1,12 @@
 extends Control
 var leavescn = preload("res://Scenes/Menus/MainMenu/leaveconfirm.tscn")
 var lines = []
+var number : int = 12
+enum scstates {
+	quit,
+	start
+}
+var scenestate = scstates.quit
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
@@ -37,6 +43,7 @@ func _on_leaveconf_yes(lcn : Control):
 	leaveconf_close(lcn)
 	$AnimationPlayer.play("leave")
 	$mainMenu/gameLogo.text = lines[randi()%len(lines)]
+	scenestate = scstates.quit
 
 func _on_options_button_down():
 	pass # Replace with function body.
@@ -47,10 +54,15 @@ func _on_credits_button_down():
 
 
 func _on_start_button_down():
-	pass # Replace with function body.
+	$AnimationPlayer.play("leave")
+	$mainMenu/gameLogo.text = lines[randi()%len(lines)]
+	scenestate = scstates.start
 
-func quit():
-	get_tree().quit()
+func changescene():
+	if scenestate == scstates.quit:
+		get_tree().quit()
+	elif scenestate == scstates.start:
+		get_tree().change_scene("res://Scenes/Levels/level1.tscn")
 
 func load_lines():
 	var result = []

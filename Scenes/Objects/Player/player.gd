@@ -5,15 +5,24 @@ const FLOOR_NORMAL = Vector2(0, -1)
 const SLOPE_SLIDE_STOP = 25.0
 const MIN_ONAIR_TIME = 0.1
 const WALK_SPEED = 250 # pixels/sec
-const JUMP_SPEED = 480
+const JUMP_SPEED = 560
 const SIDING_CHANGE_SPEED = 10
 const BULLET_VELOCITY = 1000
 const SHOOT_TIME_SHOW_WEAPON = 0.2
-
+const SPRINT_MULT = 2
+const BASE_SPRINT = 5
+const SPRINT_REGEN = 0.2
+const SPRINT_REGEN_CD = 2
+var sprint = false
+var can_sprint = true
+var sprinttime = BASE_SPRINT
+var sprintcd = 0
+var speedmult = 1
 var linear_vel = Vector2()
 var onair_time = 0 #
 var on_floor = false
 var shoot_time=99999 #time since last shot
+
 
 var anim=""
 
@@ -37,30 +46,51 @@ func _physics_process(delta):
 		onair_time = 0
 
 	on_floor = onair_time < MIN_ONAIR_TIME
-
+	speedmult = 1
 	### CONTROL ###
-
 	# Horizontal Movement
 	var target_speed = 0
 	if Input.is_action_pressed("move_left"):
 		target_speed += -1
 	if Input.is_action_pressed("move_right"):
 		target_speed +=  1
-
-	target_speed *= WALK_SPEED
-	linear_vel.x = lerp(linear_vel.x, target_speed, 0.1)
-
+	# Sprinting
+	if Input.is_action_pressed("sprint") and can_sprint and target_speed:
+		sprint = true
+	else:
+		sprint = false
+	if sprint:
+		sprintcd = SPRINT_REGEN_CD
+		speedmult = 2
+		sprinttime -= delta
+		if sprinttime <= 0:
+			can_sprint = false
+	else:
+		if sprinttime < BASE_SPRINT and sprintcd <= 0:
+			sprinttime = min(sprinttime + BASE_SPRINT * SPRINT_REGEN * delta, BASE_SPRINT)
+	if sprintcd > 0:
+		sprintcd -= delta
+	if !can_sprint:
+		if sprinttime >= BASE_SPRINT:
+			can_sprint = true
+	target_speed *= WALK_SPEED * speedmult
+	linear_vel.x = lerp(linear_vel.x, target_speed, 1)
 	# Jumping
 	if on_floor and Input.is_action_just_pressed("jump"):
 		linear_vel.y = -JUMP_SPEED
 		$sound_jump.play()
-
+	if Input.is_action_just_released("jump"):
+		linear_vel.y = max(linear_vel.y,0)
+	
 	# Shooting
 	if Input.is_action_just_pressed("shoot"):
 		var bullet = preload("res://Scenes/Objects/Projectiles/Bullet/bullet.tscn").instance()
 		bullet.position = $sprite/bullet_shoot.global_position #use node for shoot position
-		bullet.linear_velocity = Vector2(sprite.scale.x * BULLET_VELOCITY, 0)
+		bullet.movevec = Vector2(sprite.scale.x , 0).normalized()
+		bullet.speed = BULLET_VELOCITY
 		bullet.add_collision_exception_with(self) # don't want player to collide with bullet
+		#if $sprite.scale.x == -1:
+		#	bullet.rotation = PI
 		get_parent().add_child(bullet) #don't want bullet to move with me, so add it as child of parent
 		$sound_shoot.play()
 		shoot_time = 0
