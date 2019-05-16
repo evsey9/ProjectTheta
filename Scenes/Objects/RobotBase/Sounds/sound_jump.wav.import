@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/sound_jump.wav-e026ae5f3c5f669aea9b97472e862ba6.sample"
+
+[deps]
+
+source_file="res://Scenes/Objects/RobotBase/Sounds/sound_jump.wav"
+dest_files=[ "res://.import/sound_jump.wav-e026ae5f3c5f669aea9b97472e862ba6.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
