@@ -1,6 +1,6 @@
-extends KinematicBody2D
+	extends KinematicBody2D
 
-const GRAVITY_VEC = Vector2(0, 900)
+const GRAVITY_VEC = Vector2(50, 900)
 const FLOOR_NORMAL = Vector2(0, -1)
 const SLOPE_SLIDE_STOP = 25.0
 const MIN_ONAIR_TIME = 0.1
@@ -10,12 +10,15 @@ const SIDING_CHANGE_SPEED = 10
 const BULLET_VELOCITY = 1000
 const SHOOT_TIME_SHOW_WEAPON = 0.2
 const SPRINT_MULT = 2
+const SPRINT_JUMP_ADD = 1
+const SPRINT_JUMP_TIME_COST = 1
 const BASE_SPRINT = 5
 const SPRINT_REGEN = 0.2
 const SPRINT_REGEN_CD = 2
 const MAX_FALL_SPEED = 1000
 const MAX_RISE_SPEED = MAX_FALL_SPEED
 var afterimage_scene = preload("Effects/afterimage.tscn")
+var leaveafterimage = false
 var timesinceaftim = 0
 var timebetweenaft = 0.1
 var sprint = false
@@ -23,18 +26,21 @@ var can_sprint = true
 var sprinttime = BASE_SPRINT
 var sprintcd = 0
 var speedmult = 1
+var sprintjump = false
 var linear_vel = Vector2()
 var onair_time = 0 #
 var on_floor = false
 var shoot_time = 99999 #time since last shot
 var shoot = true
 var act_shoot = false
+var act_shoot_pressed = false
 var act_move_left = false
 var act_move_right = false
 var act_jump = false
 var act_jump_pressed = false
 var act_jump_released = false
 var act_sprint = false
+
 var anim=""
 
 #cache the sprite here for fast access (we will set scale to flip it often)
@@ -62,6 +68,9 @@ func _physics_process(delta):
 	on_floor = onair_time < MIN_ONAIR_TIME
 	speedmult = 1
 	### CONTROL ###
+	act_shoot_pressed = false
+	act_jump_pressed = false
+	act_jump_released = false
 	_handle_acts()
 	# Horizontal Movement
 	var target_speed = 0
@@ -73,22 +82,17 @@ func _physics_process(delta):
 	if act_sprint and can_sprint and target_speed:
 		sprint = true
 	else:
+		
 		sprint = false
 	if sprint:
-		if timesinceaftim >= timebetweenaft:
-			var aftsc = afterimage_scene.instance()
-			aftsc.position = self.position
-			aftsc.frame = $sprite.frame
-			aftsc.scale = $sprite.scale
-			get_parent().add_child(aftsc)
-			timesinceaftim = 0
+		leaveafterimage = true
 		sprintcd = SPRINT_REGEN_CD
 		speedmult = 2
 		sprinttime -= delta
-		
 		if sprinttime <= 0:
 			can_sprint = false
 	else:
+		leaveafterimage = false
 		if sprintcd <= 0:
 			sprinttime = min(sprinttime + BASE_SPRINT * SPRINT_REGEN * delta, BASE_SPRINT)
 	if sprinttime < BASE_SPRINT:
@@ -102,18 +106,28 @@ func _physics_process(delta):
 		if sprinttime >= BASE_SPRINT:
 			can_sprint = true
 	target_speed *= WALK_SPEED * speedmult
-	linear_vel.x = lerp(linear_vel.x, target_speed, 0.5)
+	linear_vel.x = lerp(linear_vel.x, target_speed, 0.3)
 	# Jumping
 	if on_floor and act_jump_pressed:
 		linear_vel.y = -JUMP_SPEED
+		if sprint:
+			sprinttime -= SPRINT_JUMP_TIME_COST
+			var sprinttaken = 1
+			if sprinttime < 0:
+				sprinttaken = (SPRINT_JUMP_TIME_COST + sprinttime) / SPRINT_JUMP_TIME_COST
+			print("sprtaken: "+str(sprinttaken))
+			linear_vel.y += -JUMP_SPEED * SPRINT_JUMP_ADD * sprinttaken
+			sprintjump = true
 		$sound_jump.play()
 	if act_jump_released:
 		linear_vel.y = max(linear_vel.y,0)
-	if act_shoot:
+	if sprintjump:
+		leaveafterimage = true
+	# Shooting
+	if act_shoot_pressed:
 		shoot = true
 	else:
 		shoot = false
-	# Shooting
 	if shoot:
 		var bullet = preload("res://Scenes/Objects/Projectiles/Bullet/bullet.tscn").instance()
 		bullet.position = $sprite/bullet_shoot.global_position #use node for shoot position
@@ -131,6 +145,7 @@ func _physics_process(delta):
 	var new_anim = "idle"
 
 	if on_floor:
+		sprintjump = false
 		if linear_vel.x < -SIDING_CHANGE_SPEED:
 			sprite.scale.x = -1
 			new_anim = "run"
@@ -151,13 +166,21 @@ func _physics_process(delta):
 			new_anim = "jumping"
 		else:
 			new_anim = "falling"
-
 	if shoot_time < SHOOT_TIME_SHOW_WEAPON:
 		new_anim += "_weapon"
 
 	if new_anim != anim:
 		anim = new_anim
 		$anim.play(anim)
+	#afterimage
+	if leaveafterimage:
+		if timesinceaftim >= timebetweenaft:
+			var aftsc = afterimage_scene.instance()
+			aftsc.position = self.position
+			aftsc.frame = $sprite.frame
+			aftsc.scale = $sprite.scale
+			get_parent().add_child(aftsc)
+			timesinceaftim = 0
 
 func _handle_acts():
 	pass

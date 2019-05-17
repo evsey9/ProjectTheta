@@ -19,5 +19,6 @@ func _handle_acts():
 	act_jump = Input.is_action_pressed("jump")
 	act_jump_pressed = Input.is_action_just_pressed("jump")
 	act_jump_released = Input.is_action_just_released("jump")
-	act_shoot = Input.is_action_just_pressed("shoot")
+	act_shoot = Input.is_action_pressed("shoot")
+	act_shoot_pressed = Input.is_action_just_pressed("shoot")
 	act_sprint = Input.is_action_pressed("sprint")
