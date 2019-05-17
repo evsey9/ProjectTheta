@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Scenes/Objects/RobotBase/robotbase.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Objects/RobotBase/Sprites/robot_demo.png" type="Texture" id=2]
@@ -14,12 +14,8 @@
 [ext_resource path="res://Scenes/Objects/RobotBase/Animations/standing_weapon_ready.anim" type="Animation" id=12]
 [ext_resource path="res://Scenes/Objects/RobotBase/Sounds/sound_jump.wav" type="AudioStream" id=13]
 [ext_resource path="res://Scenes/Objects/RobotBase/Sounds/sound_shoot.wav" type="AudioStream" id=14]
-[ext_resource path="res://Scenes/UI/MobileUI/mobile_ui.tscn" type="PackedScene" id=15]
 
-[sub_resource type="CapsuleShape2D" id=1]
-height = 44.479
-
-[sub_resource type="RectangleShape2D" id=4]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 27 )
 
 [sub_resource type="StyleBoxFlat" id=2]
@@ -56,20 +52,14 @@ anims/run_weapon = ExtResource( 11 )
 anims/standing_weapon_ready = ExtResource( 12 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
-disabled = true
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 1 )
-shape = SubResource( 4 )
+shape = SubResource( 1 )
 
 [node name="sound_jump" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 13 )
 
 [node name="sound_shoot" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 14 )
-
-[node name="mobile_ui" parent="." instance=ExtResource( 15 )]
 
 [node name="sprintbar" type="ProgressBar" parent="."]
 margin_left = -21.0
@@ -81,3 +71,4 @@ custom_styles/bg = SubResource( 3 )
 value = 100.0
 allow_lesser = true
 percent_visible = false
+

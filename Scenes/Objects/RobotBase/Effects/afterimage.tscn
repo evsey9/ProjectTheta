@@ -4,9 +4,11 @@
 [ext_resource path="res://Scenes/Objects/RobotBase/Effects/afterimage.gd" type="Script" id=2]
 
 [node name="afterimage" type="Sprite"]
+self_modulate = Color( 1, 1, 1, 0.5 )
 z_index = -1
 texture = ExtResource( 1 )
 vframes = 2
 hframes = 16
 frame = 22
 script = ExtResource( 2 )
+

@@ -1,6 +1,6 @@
 	extends KinematicBody2D
 
-const GRAVITY_VEC = Vector2(50, 900)
+const GRAVITY_VEC = Vector2(0, 900)
 const FLOOR_NORMAL = Vector2(0, -1)
 const SLOPE_SLIDE_STOP = 25.0
 const MIN_ONAIR_TIME = 0.1
@@ -20,7 +20,7 @@ const MAX_RISE_SPEED = MAX_FALL_SPEED
 var afterimage_scene = preload("Effects/afterimage.tscn")
 var leaveafterimage = false
 var timesinceaftim = 0
-var timebetweenaft = 0.1
+var timebetweenaft = 0.075
 var sprint = false
 var can_sprint = true
 var sprinttime = BASE_SPRINT
@@ -179,11 +179,20 @@ func _physics_process(delta):
 			aftsc.position = self.position
 			aftsc.frame = $sprite.frame
 			aftsc.scale = $sprite.scale
+			aftsc.self_modulate = $sprite.self_modulate
+			aftsc.self_modulate.a = 0.5
 			get_parent().add_child(aftsc)
 			timesinceaftim = 0
 
 func _handle_acts():
-	pass
+	act_move_left = false
+	act_move_right = false
+	act_jump = false
+	act_jump_pressed = false
+	act_jump_released = false
+	act_shoot = false
+	act_shoot_pressed = false
+	act_sprint = false
 	#Put all the AI logic in here for the robot to decide where to go. Example:
 	#act_move_left = Input.is_action_pressed("move_left")
 	#act_move_right = Input.is_action_pressed("move_right")

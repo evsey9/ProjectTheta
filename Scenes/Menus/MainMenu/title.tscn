@@ -151,6 +151,7 @@ theme = ExtResource( 2 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "LEAVE"
 flat = true
+
 [connection signal="button_down" from="mainMenu/start" to="." method="_on_start_button_down"]
 [connection signal="button_down" from="mainMenu/options" to="." method="_on_options_button_down"]
 [connection signal="button_down" from="mainMenu/credits" to="." method="_on_credits_button_down"]
