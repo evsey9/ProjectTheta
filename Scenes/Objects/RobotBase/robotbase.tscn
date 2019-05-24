@@ -71,4 +71,3 @@ custom_styles/bg = SubResource( 3 )
 value = 100.0
 allow_lesser = true
 percent_visible = false
-

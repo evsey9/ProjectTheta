@@ -27,6 +27,7 @@ var sprinttime = BASE_SPRINT
 var sprintcd = 0
 var speedmult = 1
 var sprintjump = false
+var jumping = false
 var linear_vel = Vector2()
 var onair_time = 0 #
 var on_floor = false
@@ -64,6 +65,7 @@ func _physics_process(delta):
 	# Detect Floor
 	if is_on_floor():
 		onair_time = 0
+		jumping = false
 
 	on_floor = onair_time < MIN_ONAIR_TIME
 	speedmult = 1
@@ -108,7 +110,8 @@ func _physics_process(delta):
 	target_speed *= WALK_SPEED * speedmult
 	linear_vel.x = lerp(linear_vel.x, target_speed, 0.3)
 	# Jumping
-	if on_floor and act_jump_pressed:
+	if on_floor and act_jump_pressed and not jumping:
+		jumping = true
 		linear_vel.y = -JUMP_SPEED
 		if sprint:
 			sprinttime -= SPRINT_JUMP_TIME_COST
