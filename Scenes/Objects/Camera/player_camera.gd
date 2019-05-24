@@ -10,4 +10,5 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	position = lerp(position,player.position,0.5)
+	var relpos = position + get_viewport_rect().size / 2
+	position = lerp(relpos,player.position,0.5) - get_viewport_rect().size / 2
