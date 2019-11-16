@@ -55,7 +55,7 @@ func _on_credits_button_down():
 
 func _on_start_button_down():
 	$AnimationPlayer.play("leave")
-	$mainMenu/gameLogo.text = lines[randi()%len(lines)]
+	#$mainMenu/gameLogo.text = lines[randi()%len(lines)]
 	scenestate = scstates.start
 
 func changescene():

@@ -41,7 +41,8 @@ var act_jump = false
 var act_jump_pressed = false
 var act_jump_released = false
 var act_sprint = false
-
+var ammo_max = 15
+var ammo = ammo_max
 var anim=""
 
 #cache the sprite here for fast access (we will set scale to flip it often)
@@ -84,7 +85,6 @@ func _physics_process(delta):
 	if act_sprint and can_sprint and target_speed:
 		sprint = true
 	else:
-		
 		sprint = false
 	if sprint:
 		leaveafterimage = true
@@ -132,6 +132,14 @@ func _physics_process(delta):
 	else:
 		shoot = false
 	if shoot:
+		ammo -= 1
+		$ammolabel.text = "Ammo: "+str(ammo)
+		if ammo < 0:
+			ammo = ammo_max
+		if ammo < ammo_max:
+			$ammolabel.show()
+		else:
+			$ammolabel.hide()
 		var bullet = preload("res://Scenes/Objects/Projectiles/Bullet/bullet.tscn").instance()
 		bullet.position = $sprite/bullet_shoot.global_position #use node for shoot position
 		bullet.movevec = Vector2(sprite.scale.x , 0).normalized()
@@ -142,7 +150,7 @@ func _physics_process(delta):
 		get_parent().add_child(bullet) #don't want bullet to move with me, so add it as child of parent
 		$sound_shoot.play()
 		shoot_time = 0
-
+	
 	### ANIMATION ###
 
 	var new_anim = "idle"

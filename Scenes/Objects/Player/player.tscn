@@ -3,7 +3,7 @@
 [ext_resource path="res://Scenes/Objects/RobotBase/robotbase.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scenes/Objects/Player/player.gd" type="Script" id=2]
 
-[node name="player" groups=[
+[node name="player" index="0" groups=[
 "player",
 ] instance=ExtResource( 1 )]
 script = ExtResource( 2 )

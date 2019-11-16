@@ -71,3 +71,11 @@ custom_styles/bg = SubResource( 3 )
 value = 100.0
 allow_lesser = true
 percent_visible = false
+
+[node name="ammolabel" type="Label" parent="."]
+visible = false
+margin_left = -32.0
+margin_top = -53.0
+margin_right = 33.0
+margin_bottom = -39.0
+text = "Ammo: "
